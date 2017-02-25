@@ -20,7 +20,7 @@
 #include <avr/pgmspace.h>
 
 #define VERSION "iBoardBot 1.08"
-//#define DEBUG 0
+#define DEBUG 1
 
 // ROBOT and USER configuration parameters
 #include "Configuration.h"
