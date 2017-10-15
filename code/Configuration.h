@@ -1,10 +1,9 @@
 // iBoardBot project
 #include <stdint.h>
 
-#define SERVER_HOST "ibb.jjrobots.com"
-#define SERVER_URL "http://ibb.jjrobots.com/ibbsvr/ibb.php"
- 
 #define MAX_PACKET_SIZE 768
+
+#define SERIAL_TIMEOUT_MS 1000
 
 // This depends on the pulley teeth and microstepping. For 20 teeth GT2 and 1/16 => 80  200*16 = 3200/(20*2mm) = 80
 #define X_AXIS_STEPS_PER_UNIT 80    
@@ -13,15 +12,21 @@
 #define X_Y_STEP_FACTOR (X_AXIS_STEPS_PER_UNIT/Y_AXIS_STEPS_PER_UNIT)
 
 // THIS VALUES DEPENDS ON THE MOTORS, PULLEYS AND ROBOT CONSTRUCTION
-#define MAX_ACCEL_X 180    //max 250      // Maximun motor acceleration in (steps/seg2)/1000
-#define MAX_ACCEL_Y 110    //max 250
+//#define MAX_ACCEL_X 180    //max 250      // Maximun motor acceleration in (steps/seg2)/1000
+#define MAX_ACCEL_X 120    //max 250      // Maximun motor acceleration in (steps/seg2)/1000
+//#define MAX_ACCEL_Y 110    //max 250
+#define MAX_ACCEL_Y 100    //max 250
 
-#define MAX_SPEED_X 30000   // Maximun speed in steps/seg (max 32000)
-#define MAX_SPEED_Y 15000
+//#define MAX_SPEED_X 30000   // Maximun speed in steps/seg (max 32000)
+#define MAX_SPEED_X 10000   // Maximun speed in steps/seg (max 32000)
+//#define MAX_SPEED_Y 15000
+#define MAX_SPEED_Y 5000
 #define SPEED_PAINT_X 4000   //4200 // Paint speed in steps/seg
 #define SPEED_PAINT_Y 1905   //1905//2100 // Paint speed in steps/seg
-#define SPEED_ERASER_X 30000 // Erase speed in steps/seg
-#define SPEED_ERASER_Y 15000  // Erase speed in steps/seg
+//#define SPEED_ERASER_X 30000 // Erase speed in steps/seg
+#define SPEED_ERASER_X 10000 // Erase speed in steps/seg
+//#define SPEED_ERASER_Y 15000  // Erase speed in steps/seg
+#define SPEED_ERASER_Y 5000  // Erase speed in steps/seg
 
 // Define speeds in steps/sec
 #define MAX_SPEED_X_STEPS MAX_SPEED_X*X_AXIS_STEPS_PER_UNIT
@@ -78,19 +83,8 @@
 
 #define MINIMUN_SPEED 25000 // Fo timer counter 
 
-#define WIFICONFIG_MAXLEN 30
-
-// Variable definitions
-// Wifi status
-bool Wconnected;
-uint8_t Network_errors;
-
 // Global variables for message reading
-long message_timer_init;
-uint8_t message_readed;
 bool message_chunked;
-int message_size;
-uint8_t message_status;
 int message_index;
 int message_index_buffer;
 char mc0,mc1,mc2,mc3,mc4,mc5,mc6,mc7;  // Last 5 chars from message for parsing...
@@ -104,7 +98,6 @@ long wait_counter;
 int dt;
 long timer_old;
 long timer_value;
-int debug_counter;
 int stopped_counter=0;
 int delay_counter=0;
 int finish=0;
@@ -150,17 +143,6 @@ bool servo2_ready=false;
 
 int16_t commands_index;
 int16_t commands_lines;
-
-//EEPROM object to store Wifi configuration
-struct WifiConfigS{
-  uint8_t status;
-  char ssid[WIFICONFIG_MAXLEN];
-  char pass[WIFICONFIG_MAXLEN];
-  char proxy[WIFICONFIG_MAXLEN];
-  unsigned int port;
-};
-
-WifiConfigS WifiConfig;
 
 // Some util functions...
 int freeRam () {
