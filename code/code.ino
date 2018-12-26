@@ -229,6 +229,7 @@ void loop()
                         SERIAL_PORT.print(F(" !PACKET ERROR!"));
                         commands_index = 0;
                         draw_task = false;
+                        enableMotors(false);
                         disableServo1();
                         disableServo2();
                         servo_counter = 0;
