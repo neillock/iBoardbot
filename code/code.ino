@@ -433,7 +433,7 @@ void loop()
                 }
                 else {
                     // End of commands...
-                    Serial.print(F(" !FINISH! time:"));
+                    Serial.print(F(" !FINISHED BLOCK! time:"));
                     Serial.println(millis() - draw_init_time);
                     commands_index = 0;
                     draw_task = false;
@@ -514,9 +514,7 @@ void loop()
             }
             Serial.print(F("CD Bytes read: "));
             Serial.println(bytes_read);
-            if (bytes_read == 0) {
-                Serial.println(F("!ERROR: M Timeout"));
-            } else {
+            if (bytes_read > 0) {
                 if (bytes_read < 6) {
                     if (bytes_read > 0) {
                         Serial.print(F("Message:"));
