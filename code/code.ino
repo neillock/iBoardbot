@@ -33,6 +33,14 @@ bool new_packet = false;
 int block_number;
 bool next_block = false;
 
+// Enable or disable motors
+inline void enableMotors(bool enable) {
+  if (enable) {
+    digitalWrite(4, LOW);
+  } else {
+    digitalWrite(4, HIGH);
+  }
+}
 
 // Configuration: Pins, servos, Steppers, Wifi...
 void setup()
@@ -44,7 +52,7 @@ void setup()
     pinMode(12, OUTPUT); // STEP MOTOR 2 PORTD,6
     pinMode(5, OUTPUT); // DIR MOTOR 2  PORTC,6
     pinMode(13, OUTPUT); // Servo pin
-    digitalWrite(4, HIGH);  // Disable motors
+    enableMotors(false);  // Disable motors
 
     pinMode(10, OUTPUT);  // Servo1
     pinMode(6, OUTPUT);   // Servo2
@@ -260,7 +268,7 @@ void loop()
                         moveServo2(SERVO2_LIFT);
                         servo_counter++;
                         if (servo_counter > 100) {
-                            digitalWrite(4, LOW); // Enable motors...
+                            enableMotors(true); // Enable motors...
                             // Default move speed
                             max_speed_x = MAX_SPEED_X;
                             max_speed_y = MAX_SPEED_Y;
@@ -285,7 +293,7 @@ void loop()
                         }
                         moveServo1(SERVO1_ERASER);
                         moveServo2(SERVO2_PAINT);
-                        digitalWrite(4, HIGH); // Disable motors...
+                        enableMotors(false); // Disable motors...
                         dir_x = 0;
                         dir_y = 0;
                         erase_mode = 0;
@@ -457,7 +465,7 @@ void loop()
                     SERIAL_PORT.println("->Force Home!");
                     draw_task = true;
                     new_packet = true;
-                    digitalWrite(4, LOW); // Enable motors...
+                    enableMotors(true); // Enable motors...
                     show_command = true;
                     timeout_counter = 0;
                     // ($code1>>4),(($code1<<4)&0xF0)|(($code2>>8)&0x0F),($code2&0xFF)
@@ -533,7 +541,7 @@ void loop()
                     }
                     draw_task = true;
                     new_packet = true;
-                    digitalWrite(4, LOW); // Enable motors...
+                    enableMotors(true); // Enable motors...
                     show_command = true;
                     timeout_counter = 0;
                     draw_init_time = millis();
