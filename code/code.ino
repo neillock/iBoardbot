@@ -300,6 +300,7 @@ void loop()
                         draw_task = false;
                         commands_index = 0;
                         servo_counter = 0;
+                        block_number = -1;
                         delay(300);    // Nothing to do ??
                         poll_again = true;
                         if (code2 == 4010) {  // Special code? => timeout_recovery on next block
