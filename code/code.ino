@@ -1,4 +1,3 @@
-
 // iBoardBot PROJECT
 // Author: Jose Julio & Juan pedro (JJROBOTS)
 // Hardware: Arduino Leonardo + JJROBOTS BROBOT shield 2 (new) with ESP-12E Wifi module
@@ -59,23 +58,23 @@ void setup()
     pinMode(2, OUTPUT);   // SERVOs aux (on I2C)
 
     delay(100);
-    SERIAL_PORT.begin(115200); // serial output to console
-    //while (!SERIAL_PORT);      // Arduino Leonardo wait for serial port to open...
-    SERIAL_PORT.setTimeout(SERIAL_TIMEOUT_MS);
+    Serial.begin(115200); // Serial output to console
+    //while (!Serial);      // Arduino Leonardo wait for Serial port to open...
+    Serial.setTimeout(SERIAL_TIMEOUT_MS);
 
     delay(1000);
 
 #ifdef DEBUG
     delay(10000);  // Only needed for serial debug
-    SERIAL_PORT.println(VERSION);
-    SERIAL_PORT.println(F("\nserial output prefixes:"));
-    SERIAL_PORT.println(F("  CL - Cloudless data (from bot to host)"));
-    SERIAL_PORT.println(F("  CD - Cloudless debug info"));
-    SERIAL_PORT.println();
+    Serial.println(VERSION);
+    Serial.println(F("\nSerial output prefixes:"));
+    Serial.println(F("  CL - Cloudless data (from bot to host)"));
+    Serial.println(F("  CD - Cloudless debug info"));
+    Serial.println();
 #endif
 
     // Init servos
-    SERIAL_PORT.println(F("Servo init..."));
+    Serial.println(F("Servo init..."));
     servo_pos1 = SERVO1_ERASER;
     servo_pos2 = SERVO2_PAINT;
     initServo();
@@ -90,20 +89,20 @@ void setup()
     position_y = ROBOT_INITIAL_POSITION_Y * Y_AXIS_STEPS_PER_UNIT;
 
     // Output parameters
-    //SERIAL_PORT.print(F("Max_acceleration_x: "));
-    //SERIAL_PORT.println(acceleration_x);
-    //SERIAL_PORT.print(F("Max_acceleration_y: "));
-    //SERIAL_PORT.println(acceleration_y);
-    //SERIAL_PORT.print(F("Max speed X: "));
-    //SERIAL_PORT.println(MAX_SPEED_X);
-    //SERIAL_PORT.print(F("Max speed Y: "));
-    //SERIAL_PORT.println(MAX_SPEED_Y);
+    //Serial.print(F("Max_acceleration_x: "));
+    //Serial.println(acceleration_x);
+    //Serial.print(F("Max_acceleration_y: "));
+    //Serial.println(acceleration_y);
+    //Serial.print(F("Max speed X: "));
+    //Serial.println(MAX_SPEED_X);
+    //Serial.print(F("Max speed Y: "));
+    //Serial.println(MAX_SPEED_Y);
 
-    SERIAL_PORT.print(F("Free RAM: "));
-    SERIAL_PORT.println(freeRam());
+    Serial.print(F("Free RAM: "));
+    Serial.println(freeRam());
 
     // STEPPER MOTORS INITIALIZATION
-    SERIAL_PORT.println(F("Steper motors initialization..."));
+    Serial.println(F("Steper motors initialization..."));
     // MOTOR1 = X axis => TIMER1
     TCCR1A = 0;                       // Timer1 CTC mode 4, OCxA,B outputs disconnected
     TCCR1B = (1 << WGM12) | (1 << CS11); // Prescaler=8, => 2Mhz
@@ -119,7 +118,7 @@ void setup()
     TCNT3 = 0;
 
     delay(200);
-    //SERIAL_PORT.println("Moving to initial position...");
+    //Serial.println("Moving to initial position...");
     // Initializing Robot command variables
     com_speed_x = MAX_SPEED_X / 2;
     com_speed_y = MAX_SPEED_Y / 2;
@@ -145,9 +144,9 @@ void setup()
 
     delay(50);
 
-    SERIAL_PORT.println(VERSION);
-    //SERIAL_PORT.print("ID_IWBB ");
-    SERIAL_PORT.println(" Ready...");
+    Serial.println(VERSION);
+    //Serial.print("ID_IWBB ");
+    Serial.println(" Ready...");
     timer_old = micros();
     timeout_counter = 0;
     block_number = -1;
@@ -191,16 +190,16 @@ void loop()
             wait_counter = 0;
             if ((timeout_counter > 8000) || ((myAbsLong(target_position_x - position_x) < POSITION_TOLERANCE_X) && (myAbsLong(target_position_y - position_y) < POSITION_TOLERANCE_Y))) { // Move done?
                 if (timeout_counter > 8000) {
-                    SERIAL_PORT.print(F("!TimeoutCounter! ")); // 8 seconds timeout
+                    Serial.print(F("!TimeoutCounter! ")); // 8 seconds timeout
                     show_command = true;
                     // Reset position on timeout?
                 }
 #if DEBUG==2
                 if (show_command) {
-                    SERIAL_PORT.print(" EP:");
-                    SERIAL_PORT.print(position_x);
-                    SERIAL_PORT.print(":");
-                    SERIAL_PORT.println(position_y);
+                    Serial.print(" EP:");
+                    Serial.print(position_x);
+                    Serial.print(":");
+                    Serial.println(position_y);
                 }
 #endif
                 if (commands_index < commands_lines) {
@@ -214,19 +213,19 @@ void loop()
 
 #if DEBUG==2
                     if (show_command) {
-                        SERIAL_PORT.print(F("CD Command: "));
-                        SERIAL_PORT.print(commands_index);
-                        SERIAL_PORT.print(":");
-                        SERIAL_PORT.print(code1);
-                        SERIAL_PORT.print(",");
-                        SERIAL_PORT.println(code2);
+                        Serial.print(F("CD Command: "));
+                        Serial.print(commands_index);
+                        Serial.print(":");
+                        Serial.print(code1);
+                        Serial.print(",");
+                        Serial.println(code2);
                         show_command = false;
                     }
 #endif
                     // DECODE protocol codes
                     if ((new_packet) && (code1 != 4009)) { // check new packet
                         // PACKET ERROR: No valid first command!
-                        SERIAL_PORT.print(F(" !PACKET ERROR!"));
+                        Serial.print(F(" !PACKET ERROR!"));
                         commands_index = 0;
                         draw_task = false;
                         enableMotors(false);
@@ -242,13 +241,13 @@ void loop()
                         if (block_number >= 4000)
                             block_number = -1;
                         else {
-                            SERIAL_PORT.print(F("CD Start block: "));
-                            SERIAL_PORT.println(block_number);
+                            Serial.print(F("CD Start block: "));
+                            Serial.println(block_number);
                         }
                         show_command = true;
                         servo_counter = 0;
                         if (timeout_recover) {   // Timeout recovery mode? This means we had a timeout
-                            SERIAL_PORT.print(F("->Timeout recover!"));
+                            Serial.print(F("->Timeout recover!"));
                             // Rewrite a PEN LIFT COMMAND 4003 0
                             buffer[commands_index * 3] = (4003 >> 4);
                             buffer[commands_index * 3+1]= ((4003 << 4) & 0xF0);
@@ -260,7 +259,7 @@ void loop()
                     }
                     else if ((code1 == 4001) && (code2 == 4001)) { // START DRAWING
                         if (servo_counter == 0) {
-                            SERIAL_PORT.println(F(" !START DRAW"));
+                            Serial.println(F(" !START DRAW"));
                             enableServo1();
                             enableServo2();
                         }
@@ -281,16 +280,16 @@ void loop()
                         }
                     }
                     else if (code1 == 4002) { // END DRAWING
-                        SERIAL_PORT.print(F(" !STOP DRAW time:"));
-                        SERIAL_PORT.println(millis() - draw_init_time);
+                        Serial.print(F(" !STOP DRAW time:"));
+                        Serial.println(millis() - draw_init_time);
                         // Pen lift
                         if (!servo1_ready) {
                             enableServo1();
-                            //SERIAL_PORT.println("EnableS1");
+                            //Serial.println("EnableS1");
                         }
                         if (!servo2_ready) {
                             enableServo2();
-                            //SERIAL_PORT.println("EnableS2");
+                            //Serial.println("EnableS2");
                         }
                         moveServo1(SERVO1_ERASER);
                         moveServo2(SERVO2_PAINT);
@@ -305,7 +304,7 @@ void loop()
                         poll_again = true;
                         if (code2 == 4010) {  // Special code? => timeout_recovery on next block
                             timeout_recover = true;
-                            SERIAL_PORT.print(F("->Timeout recover mode!"));
+                            Serial.print(F("->Timeout recover mode!"));
                         }
                         else
                             timeout_recover = false;
@@ -345,7 +344,7 @@ void loop()
                         moveServo1(SERVO1_PAINT);
                         moveServo2(SERVO2_PAINT);
                         servo_counter++;
-                        //SERIAL_PORT.println(servo_pos);
+                        //Serial.println(servo_pos);
                         if (servo_counter > 180) {
                             servo_pos2 = SERVO2_PAINT;
                             erase_mode = 0;
@@ -372,7 +371,7 @@ void loop()
                         moveServo2(SERVO2_PAINT);
                         servo_counter++;
                         //moveServo2(SERVO2_PAINT);
-                        //SERIAL_PORT.println(servo_pos);
+                        //Serial.println(servo_pos);
                         if (servo_counter > 350) {
                             servo_pos1 = SERVO1_ERASER;
                             erase_mode = 1;
@@ -380,7 +379,7 @@ void loop()
                             show_command = true;
                             max_speed_x = SPEED_ERASER_X;
                             max_speed_y = SPEED_ERASER_Y;
-                            SERIAL_PORT.println(F(" SE"));
+                            Serial.println(F(" SE"));
                             timeout_counter = 0;
                             servo_counter = 0;
                             disableServo1();
@@ -395,7 +394,7 @@ void loop()
                         if (code2 > 30) // maximun 30 seconds of wait
                             code2 = 30;
                         if (delay_counter > ((long)code2 * 1000)) { // Wait for code2 seconds
-                            SERIAL_PORT.println(F(" WM"));
+                            Serial.println(F(" WM"));
                             commands_index++;
                             show_command = true;
                             delay_counter = 0;
@@ -411,7 +410,7 @@ void loop()
                         // Send coordinates to robot in mm/10 units
                         if (erase_mode == 1) { // In erase mode, we make the correction of the position of the eraser
                             setPosition_mm10(code1 + ERASER_OFFSET_X * 10, code2 + ERASER_OFFSET_Y * 10);
-                            SERIAL_PORT.print("E");
+                            Serial.print("E");
                         }
                         else {
                             if ((code1 < 10) && (code2 < 10)) { // Home position?
@@ -433,8 +432,8 @@ void loop()
                 }
                 else {
                     // End of commands...
-                    SERIAL_PORT.print(F(" !FINISH! time:"));
-                    SERIAL_PORT.println(millis() - draw_init_time);
+                    Serial.print(F(" !FINISH! time:"));
+                    Serial.println(millis() - draw_init_time);
                     commands_index = 0;
                     draw_task = false;
                     disableServo1();
@@ -447,10 +446,10 @@ void loop()
 
 #if DEBUG==2
             if ((loop_counter % 50) == 0) {
-                SERIAL_PORT.print(position_x);
-                SERIAL_PORT.print(":");
-                SERIAL_PORT.print(position_y);
-                SERIAL_PORT.println();
+                Serial.print(position_x);
+                Serial.print(":");
+                Serial.print(position_y);
+                Serial.println();
             }
 #endif
         }  // draw task
@@ -463,7 +462,7 @@ void loop()
                     wait_counter = millis();
                 if ((millis() - wait_counter) > 8000) {
                     // Force Go to home command
-                    SERIAL_PORT.println("->Force Home!");
+                    Serial.println("->Force Home!");
                     draw_task = true;
                     new_packet = true;
                     enableMotors(true); // Enable motors...
@@ -496,49 +495,49 @@ void loop()
                 }
             } // if(!home_position)
             delay(20);
-            SERIAL_PORT.println();
-            SERIAL_PORT.println(F("CD Polling SERIAL_PORT..."));
+            Serial.println();
+            Serial.println(F("CD Polling serial..."));
             if (block_number == -1) {
                 // Ready for new blocks...
                 strcpy(get_string, "CL STATUS=READY");
-                SERIAL_PORT.println(get_string);
-                bytes_read = SERIAL_PORT.readBytes(buffer, BUFFER_LEN);
+                Serial.println(get_string);
+                bytes_read = Serial.readBytes(buffer, BUFFER_LEN);
             } else {
                 // ACK last block and ready for new one...
                 strcpy(get_string, "CL STATUS=ACK&NUM=");
                 char num[6];
                 sprintf(num, "%d", block_number);
                 strcat(get_string, num);
-                SERIAL_PORT.println(get_string);
-                bytes_read = SERIAL_PORT.readBytes(buffer, BUFFER_LEN);
+                Serial.println(get_string);
+                bytes_read = Serial.readBytes(buffer, BUFFER_LEN);
             }
-            SERIAL_PORT.print(F("CD Bytes read: "));
-            SERIAL_PORT.println(bytes_read);
+            Serial.print(F("CD Bytes read: "));
+            Serial.println(bytes_read);
             if (bytes_read == 0) {
-                SERIAL_PORT.println(F("!ERROR: M Timeout"));
+                Serial.println(F("!ERROR: M Timeout"));
             } else {
                 if (bytes_read < 6) {
                     if (bytes_read > 0) {
-                        SERIAL_PORT.print(F("Message:"));
-                        SERIAL_PORT.print((char)buffer[0]);
-                        SERIAL_PORT.println((char)buffer[1]);
+                        Serial.print(F("Message:"));
+                        Serial.print((char)buffer[0]);
+                        Serial.println((char)buffer[1]);
                     }
                     block_number = -1;
                     // Error message?
                     if (buffer[0] == 'E') {
-                        SERIAL_PORT.println("Error Message!");
-                        SERIAL_PORT.println("Wait for next request...");
+                        Serial.println("Error Message!");
+                        Serial.println("Wait for next request...");
                         delay(10000);
                         // Something more here??
                     }
                     delay(100);
                 } else {
-                    SERIAL_PORT.print(F("CD Processing packet... Lines: "));
+                    Serial.print(F("CD Processing packet... Lines: "));
                     commands_lines = bytes_read / 3;
-                    SERIAL_PORT.println(commands_lines);
+                    Serial.println(commands_lines);
                     commands_index = 0;
                     if (bytes_read == MAX_PACKET_SIZE) {
-                        SERIAL_PORT.println(F("CD MORE BLOCKS!"));
+                        Serial.println(F("CD MORE BLOCKS!"));
                     }
                     draw_task = true;
                     new_packet = true;

@@ -4,7 +4,6 @@
 #define MAX_PACKET_SIZE 768
 
 #define SERIAL_TIMEOUT_MS 1000
-#define SERIAL_PORT Serial1
 
 // This depends on the pulley teeth and microstepping. For 20 teeth GT2 and 1/16 => 80  200*16 = 3200/(20*2mm) = 80
 #define X_AXIS_STEPS_PER_UNIT 80    
