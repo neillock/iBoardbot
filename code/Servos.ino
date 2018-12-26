@@ -61,14 +61,14 @@ ISR(TIMER4_COMPA_vect)
   CLR(PORTD,1);
 }
 
-void disableServo1()
+inline void disableServo1()
 {
   while (TCNT4<0xFF);   // Wait for sync...
   CLR(TCCR4A,COM4B1);
   servo1_ready=false;
 }
 
-void disableServo2()
+inline void disableServo2()
 {
   while (TCNT4<0xFF);   // Wait for sync...
   TIMSK4 = 0;
@@ -77,14 +77,14 @@ void disableServo2()
   servo2_ready=false;
 }
 
-void enableServo1()
+inline void enableServo1()
 {
   while (TCNT4<0xFF);   // Wait for sync...
   SET(TCCR4A,COM4B1);
   servo1_ready=true;
 }
 
-void enableServo2()
+inline void enableServo2()
 {
   while (TCNT4<0xFF);   // Wait for sync...
   TIMSK4 = (1 << TOIE4) | (1 << OCIE4A);
@@ -130,4 +130,3 @@ void moveServo2(int pwm)
   OCR4A = pwm & 0xFF;
   OCR4D = pwm & 0xFF;  // New 2.1 boards servo2 output
 }
-
