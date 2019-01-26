@@ -59,8 +59,8 @@
 #define ROBOT_MAX_Y 123
 
 // Eraser offset in mm
-#define ERASER_OFFSET_X 0    
-#define ERASER_OFFSET_Y 0
+#define ERASER_OFFSET_X 0
+#define ERASER_OFFSET_Y -12 // Move down a bit to avoid "cleaning" the top edge (which can cause the servo to tilt)
 
 // Offset for Paint in mm
 #define PAINT_OFFSET_X 0
@@ -174,5 +174,3 @@ int sign(int val)
   else
     return(1);
 }
-
-
