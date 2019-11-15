@@ -13,20 +13,20 @@
 
 // THIS VALUES DEPENDS ON THE MOTORS, PULLEYS AND ROBOT CONSTRUCTION
 //#define MAX_ACCEL_X 180    //max 250      // Maximun motor acceleration in (steps/seg2)/1000
-#define MAX_ACCEL_X 120    //max 250      // Maximun motor acceleration in (steps/seg2)/1000
+#define MAX_ACCEL_X 180  //was 120  //max 250      // Maximun motor acceleration in (steps/seg2)/1000
 //#define MAX_ACCEL_Y 110    //max 250
-#define MAX_ACCEL_Y 100    //max 250
+#define MAX_ACCEL_Y 110 //was 100   //max 250
 
-//#define MAX_SPEED_X 30000   // Maximun speed in steps/seg (max 32000)
-#define MAX_SPEED_X 10000   // Maximun speed in steps/seg (max 32000)
-//#define MAX_SPEED_Y 15000
-#define MAX_SPEED_Y 5000
+#define MAX_SPEED_X 30000   // Maximun speed in steps/seg (max 32000)
+//was#define MAX_SPEED_X 10000   // Maximun speed in steps/seg (max 32000)
+#define MAX_SPEED_Y 15000
+//was #define MAX_SPEED_Y 5000
 #define SPEED_PAINT_X 4000   //4200 // Paint speed in steps/seg
 #define SPEED_PAINT_Y 1905   //1905//2100 // Paint speed in steps/seg
-//#define SPEED_ERASER_X 30000 // Erase speed in steps/seg
-#define SPEED_ERASER_X 10000 // Erase speed in steps/seg
-//#define SPEED_ERASER_Y 15000  // Erase speed in steps/seg
-#define SPEED_ERASER_Y 5000  // Erase speed in steps/seg
+#define SPEED_ERASER_X 30000 // Erase speed in steps/seg
+//#define SPEED_ERASER_X 10000 // Erase speed in steps/seg
+#define SPEED_ERASER_Y 15000  // Erase speed in steps/seg
+//#define SPEED_ERASER_Y 5000  // Erase speed in steps/seg
 
 // Define speeds in steps/sec
 #define MAX_SPEED_X_STEPS MAX_SPEED_X*X_AXIS_STEPS_PER_UNIT
@@ -55,16 +55,22 @@
 // Robot 
 #define ROBOT_MIN_X 0
 #define ROBOT_MIN_Y 0
+// Originals before Tom modified it
+//#define ROBOT_MAX_X 358
+//#define ROBOT_MAX_Y 123
 #define ROBOT_MAX_X 358
 #define ROBOT_MAX_Y 123
 
 // Eraser offset in mm
 #define ERASER_OFFSET_X 0
-#define ERASER_OFFSET_Y -12 // Move down a bit to avoid "cleaning" the top edge (which can cause the servo to tilt)
+#define ERASER_OFFSET_Y 0 // -12 // Move down a bit to avoid "cleaning" the top edge (which can cause the servo to tilt)
 
 // Offset for Paint in mm
+// Originals before Tom modified it
+//#define PAINT_OFFSET_X 0
+//#define PAINT_OFFSET_Y 6
 #define PAINT_OFFSET_X 0
-#define PAINT_OFFSET_Y 6
+#define PAINT_OFFSET_Y -5
 
 // Initial robot position in mm
 // The robot must be set at this position at start time (steps initialization)
